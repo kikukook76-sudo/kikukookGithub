@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Дроп Гараж — Детейлинг Центр</title>
+
+  <style>
+    /* ---------- ОСНОВНЫЕ НАСТРОЙКИ ---------- */
+    * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #0d0d0d; color: #f2f2f2; line-height: 1.6; overflow-x: hidden;
+    }
+
+    /* ---------- ШАПКА ---------- */
+    header {
+      background: rgba(17, 17, 17, 0.9);
+      backdrop-filter: blur(10px);
+      padding: 18px 40px; position: fixed; width: 100%; top: 0; z-index: 1000;
+      display: flex; justify-content: space-between; align-items: center;
+      transition: background 0.3s; border-bottom: 1px solid #222;
+    }
+    header.scrolled { background: rgba(0,0,0,0.95); }
+    header h1 { color: #00b3ff; font-size: 24px; letter-spacing: 2px; font-weight: bold; }
+    nav a { color: #f2f2f2; text-decoration: none; margin-left: 18px; font-weight: bold; }
+    nav a:hover, nav a.active { color: #00b3ff; }
+
+    /* ---------- ГЛАВНЫЙ ЭКРАН ---------- */
+    .hero {
+      background: url('https://images.unsplash.com/photo-1503376780353-7e6692767b70') center/cover no-repeat;
+      height: 70vh; display: flex; align-items: center; justify-content: center; text-align: center; margin-top: 70px;
+    }
+    .hero h2 {
+      background: rgba(0,0,0,0.65); padding: 20px 36px; border-radius: 10px; font-size: 36px; color: #00b3ff;
+      animation: fadeInUp 1.2s ease;
+    }
+
+    section { padding: 90px 60px; }
+
+    h2.section-title {
+      text-align: center; margin-bottom: 40px; font-size: 32px; color: #00b3ff;
+      border-bottom: 2px solid #00b3ff; display: inline-block; padding-bottom: 10px;
+    }
+
+    /* ---------- УСЛУГИ ---------- */
+    .services {
+      display: flex; justify-content: center; flex-wrap: wrap; gap: 28px;
+    }
+    .service-card {
+      background: #141414; border-radius: 10px; overflow: hidden; width: 300px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.6); cursor: pointer; transition: transform .18s ease, box-shadow .18s;
+      border: 1px solid rgba(255,255,255,0.03);
+    }
+    .service-card:hover { transform: translateY(-6px); box-shadow: 0 12px 30px rgba(0,0,0,0.7); }
+    .service-card img { width: 100%; height: 190px; object-fit: cover; display:block; }
+    .service-card .info { padding: 16px; text-align: center; }
+    .service-card h3 { color: #00b3ff; margin-bottom: 8px; }
+    .service-card p { color: #cfcfcf; font-size: 14px; min-height: 40px; }
+    .price { font-size: 18px; color: #fff; font-weight: 700; margin-top: 10px; }
+
+    /* ---------- PORTFOLIO ---------- */
+    .portfolio-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; align-items: start;
+    }
+    .portfolio-item { overflow: hidden; border-radius: 8px; border: 1px solid rgba(255,255,255,0.04); }
+    .portfolio-item img { width: 100%; height: 180px; object-fit: cover; display:block; transition: transform .35s ease; }
+    .portfolio-item:hover img { transform: scale(1.06); filter: brightness(0.98); cursor: zoom-in; }
+
+    /* ---------- КАК МЫ РАБОТАЕМ ---------- */
+    .steps {
+      display: flex; gap: 18px; justify-content: center; flex-wrap: wrap;
+    }
+    .step {
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius: 12px; width: 200px; padding: 18px; text-align: center; border: 1px solid rgba(255,255,255,0.03);
+      box-shadow: 0 8px 22px rgba(0,0,0,0.6);
+    }
+    .step .num {
+      width: 52px; height: 52px; border-radius: 50%; background: #00b3ff; color: #071124; display:inline-flex;
+      align-items:center; justify-content:center; font-weight:800; font-size:20px; margin-bottom: 12px;
+    }
+    .step p { color: #ddd; font-size: 14px; }
+
+    /* ---------- POPUP ФОТО И МОДАЛ ЦЕН ---------------- */
+    .popup, .modal-prices {
+      display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.9);
+      justify-content:center; align-items:center; z-index: 3000; padding: 30px;
+    }
+    .popup img { max-width: 92%; max-height: 92%; border-radius: 10px; box-shadow: 0 0 30px rgba(255,255,255,0.07); }
+    .modal-box {
+      background: #0f0f10; border-radius: 12px; padding: 22px; max-width: 720px; width: 100%; color: #eef2f7;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.7); border: 1px solid rgba(255,255,255,0.03);
+    }
+    .modal-close { position:absolute; top: 24px; right: 30px; color: #fff; font-size: 34px; cursor:pointer; }
+    .modal-prices table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+    .modal-prices th, .modal-prices td {
+      padding: 12px 10px; text-align: left; border-bottom: 1px dashed rgba(255,255,255,0.04);
+    }
+    .modal-prices th { color: #00b3ff; font-weight:700; width:60%; }
+    .modal-prices td { color: #fff; font-weight:700; width:40%; text-align:right; }
+
+    /* ---------- FOOTER & TO TOP ---------- */
+    footer { background: #111; text-align:center; padding: 40px; color: #888; border-top: 1px solid #222; margin-top: 40px; }
+    footer a { color: #00b3ff; text-decoration:none; }
+
+    #toTop { position: fixed; bottom: 30px; right: 30px; background: #00b3ff; color:#fff; border:none; padding:12px 18px;
+      border-radius: 50%; cursor: pointer; font-size: 18px; box-shadow: 0 0 12px rgba(0,179,255,0.5); display:none; z-index:1500;
+    }
+
+    /* ---------- АНИМАЦИИ ---------- */
+    @keyframes fadeInUp { from { opacity:0; transform: translateY(30px);} to { opacity:1; transform: translateY(0);} }
+    @media (max-width: 1100px) { .portfolio-grid { grid-template-columns: repeat(3,1fr); } }
+    @media (max-width: 820px) {
+      .portfolio-grid { grid-template-columns: repeat(2,1fr); }
+      .services { flex-direction: column; align-items: center; }
+      section { padding: 60px 18px; }
+    }
+    @media (max-width: 480px) {
+      .portfolio-grid { grid-template-columns: 1fr; }
+      .steps { flex-direction: column; align-items: center; }
+      header { padding: 14px 18px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>ДРОП ГАРАЖ</h1>
+    <nav>
+      <a href="#about" class="active">О нас</a>
+      <a href="#services">Услуги</a>
+      <a href="#portfolio">Портфолио</a>
+      <a href="#how">Как мы работаем</a>
+      <a href="#contacts">Контакты</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h2>Премиум детейлинг центр в твоём городе</h2>
+  </section>
+
+  <section id="about">
+    <h2 class="section-title">О нас</h2>
+    <p style="max-width:800px; margin:40px auto; text-align:center; font-size:18px;">
+      <strong>Дроп Гараж</strong> — место, где ваш автомобиль получает максимум внимания и заботы.
+      Мы предлагаем профессиональный детейлинг, уход за кузовом, салоном и защитные покрытия премиум-класса.
+      Используем только сертифицированную химию и современное оборудование.
+    </p>
+  </section>
+
+  <section id="services">
+    <h2 class="section-title">Наши работы и услуги</h2>
+
+    <div class="services">
+      <!-- Для каждой карточки указан data-prices (JSON) с ценами по классам -->
+      <div class="service-card" data-service="Полировка" data-prices='{"Седан":"2500 ₽","Внедорожник":"3500 ₽","Купе":"3000 ₽","Кабриолет":"3200 ₽","Минивэн":"4000 ₽","Микроавтобус":"5000 ₽"}'>
+        <img src="images/polishing.jpg" alt="Полировка кузова" />
+        <div class="info">
+          <h3>Полировка кузова</h3>
+          <p>Профессиональная ручная и машинная полировка с защитным воском.</p>
+          <div class="price">от 2 500 ₽</div>
+        </div>
+      </div>
+
+      <div class="service-card" data-service="Оклейка защитной плёнкой" data-prices='{"Седан":"50 000 ₽","Внедорожник":"65 000 ₽","Купе":"55 000 ₽","Кабриолет":"60 000 ₽","Минивэн":"70 000 ₽","Микроавтобус":"95 000 ₽"}'>
+        <img src="images/09d24ec8-2029-4e28-b615-3a719545de11.png" alt="Оклейка авто" />
+        <div class="info">
+          <h3>Оклейка защитной плёнкой</h3>
+          <p>Защита лобовой части и всего кузова от сколов и царапин.</p>
+          <div class="price">от 50 000 ₽</div>
+        </div>
+      </div>
+
+      <div class="service-card" data-service="Тонировка" data-prices='{"Седан":"3 000 ₽","Внедорожник":"4 500 ₽","Купе":"3 500 ₽","Кабриолет":"3 800 ₽","Минивэн":"5 000 ₽","Микроавтобус":"7 500 ₽"}'>
+        <img src="images/11070e51-12d7-46dc-85ca-17396d5c0ba6.png" alt="Тонировка авто" />
+        <div class="info">
+          <h3>Тонировка авто</h3>
+          <p>Качественная тонировка боковых и задних стекол профессиональными плёнками.</p>
+          <div class="price">от 3 000 ₽</div>
+        </div>
+      </div>
+
+      <div class="service-card" data-service="Оклейка в другой цвет" data-prices='{"Седан":"25 000 ₽","Внедорожник":"35 000 ₽","Купе":"30 000 ₽","Кабриолет":"32 000 ₽","Минивэн":"40 000 ₽","Микроавтобус":"60 000 ₽"}'>
+        <img src="images/fb035e12-2939-4e27-b5e2-7e4202d55d16.png" alt="Оклейка в цвет" />
+        <div class="info">
+          <h3>Оклейка в другой цвет</h3>
+          <p>Полная или частичная оклейка кузова в любой цвет и отделку (глянцевый/матовый).</p>
+          <div class="price">от 25 000 ₽</div>
+        </div>
+      </div>
+
+      <div class="service-card" data-service="Химчистка салона" data-prices='{"Седан":"3 000 ₽","Внедорожник":"4 500 ₽","Купе":"3 200 ₽","Кабриолет":"3 200 ₽","Минивэн":"5 000 ₽","Микроавтобус":"6 500 ₽"}'>
+        <img src="images/d314242e-f43a-412b-ba3f-4c96dcb2eba4.png" alt="Химчистка салона" />
+        <div class="info">
+          <h3>Химчистка салона</h3>
+          <p>Глубокая очистка всех поверхностей салона от пятен, пыли и запахов.</p>
+          <div class="price">от 3 000 ₽</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ПОРТФОЛИО -->
+  <section id="portfolio">
+    <h2 class="section-title">Наше портфолио</h2>
+    <div class="portfolio-grid">
+      <div class="portfolio-item"><img src="images/portfolio1.jpg" alt="Портфолио 1"></div>
+      <div class="portfolio-item"><img src="images/portfolio2.jpg" alt="Портфолио 2"></div>
+      <div class="portfolio-item"><img src="images/portfolio3.jpg" alt="Портфолио 3"></div>
+      <div class="portfolio-item"><img src="images/portfolio4.jpg" alt="Портфолио 4"></div>
+      <div class="portfolio-item"><img src="images/portfolio5.jpg" alt="Портфолио 5"></div>
+      <div class="portfolio-item"><img src="images/portfolio6.jpg" alt="Портфолио 6"></div>
+      <div class="portfolio-item"><img src="images/portfolio7.jpg" alt="Портфолио 7"></div>
+      <div class="portfolio-item"><img src="images/portfolio8.jpg" alt="Портфолио 8"></div>
+    </div>
+  </section>
+
+  <!-- КАК МЫ РАБОТАЕМ -->
+  <section id="how">
+    <h2 class="section-title">Как мы работаем с клиентами</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="num">1</div>
+        <p>Заявка — звонок или заявка через сайт</p>
+      </div>
+      <div class="step">
+        <div class="num">2</div>
+        <p>Диагностика — осмотр авто и согласование работ</p>
+      </div>
+      <div class="step">
+        <div class="num">3</div>
+        <p>Согласование — утверждаем сроки и стоимость</p>
+      </div>
+      <div class="step">
+        <div class="num">4</div>
+        <p>Выполнение — профессиональная работа в мастерской</p>
+      </div>
+      <div class="step">
+        <div class="num">5</div>
+        <p>Выдача — передача авто владельцу и сервисная рекомендация</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="contacts">
+    <h2 class="section-title">Контакты</h2>
+    <p style="text-align:center; font-size:18px;">
+      📍 Адрес: г. Москва, ул. Примерная, 12<br />
+      📞 Телефон: <a href="tel:+79998887766">+7 (999) 888-77-66</a><br />
+      📱 Instagram: <a href="#">@drop_garage</a><br />
+      ⏰ Время работы: Пн–Вс 10:00–21:00
+    </p>
+  </section>
+
+  <footer>
+    <p>© 2025 Дроп Гараж | Сделано с любовью к авто ❤️</p>
+  </footer>
+
+  <!-- Кнопка наверх -->
+  <button id="toTop" title="Наверх">↑</button>
+
+  <!-- POPUP Photo -->
+  <div class="popup" id="popup">
+    <span class="modal-close" id="popupClose">&times;</span>
+    <img id="popupImg" src="" alt="Фото работы" />
+  </div>
+
+  <!-- MODAL ЦЕНЫ -->
+  <div class="modal-prices" id="modalPrices">
+    <div class="modal-close" id="pricesClose">&times;</div>
+    <div class="modal-box" id="pricesBox">
+      <h3 id="pricesTitle" style="color:#00b3ff; margin-bottom:6px;">Цены</h3>
+      <p id="pricesDesc" style="color:#cbd5df; margin-bottom:12px;">Цены зависят от класса автомобиля. Примерная стоимость:</p>
+      <div id="pricesTableContainer"></div>
+    </div>
+  </div>
+
+  <script>
+    // --- Входная анимация карточек ---
+    document.querySelectorAll('.service-card').forEach((c, i) => {
+      c.style.animation = `fadeInUp .6s ease ${i * 80}ms both`;
+    });
+
+    // --- Меню и кнопка наверх ---
+    const header = document.querySelector('header');
+    const toTop = document.getElementById('toTop');
+    window.addEventListener('scroll', () => {
+      header.classList.toggle('scrolled', window.scrollY > 50);
+      toTop.style.display = window.scrollY > 400 ? 'block' : 'none';
+    });
+    toTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+    // --- Highlight nav ---
+    const sections = document.querySelectorAll('section');
+    const navLinks = document.querySelectorAll('nav a');
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop - 160;
+        if (scrollY >= sectionTop) current = section.getAttribute('id');
+      });
+      navLinks.forEach(a => {
+        a.classList.toggle('active', a.getAttribute('href').includes(current));
+      });
+    });
+
+    // --- POPUP photo (portfolio) ---
+    const popup = document.getElementById('popup');
+    const popupImg = document.getElementById('popupImg');
+    const popupClose = document.getElementById('popupClose');
+
+    document.querySelectorAll('.portfolio-item img').forEach(img => {
+      img.addEventListener('click', () => {
+        popup.style.display = 'flex';
+        popupImg.src = img.src;
+      });
+    });
+    popupClose.addEventListener('click', () => popup.style.display = 'none');
+    popup.addEventListener('click', e => { if (e.target === popup) popup.style.display = 'none'; });
+
+    // --- Modal цены (при клике на услугу) ---
+    const modalPrices = document.getElementById('modalPrices');
+    const pricesClose = document.getElementById('pricesClose');
+    const pricesBox = document.getElementById('pricesBox');
+    const pricesTitle = document.getElementById('pricesTitle');
+    const pricesTableContainer = document.getElementById('pricesTableContainer');
+
+    function makePricesTable(pricesObj) {
+      let html = '<table><thead><tr><th>Класс автомобиля</th><th>Цена</th></tr></thead><tbody>';
+      for (const [k, v] of Object.entries(pricesObj)) {
+        html += `<tr><td>${k}</td><td>${v}</td></tr>`;
+      }
+      html += '</tbody></table>';
+      return html;
+    }
+
+    document.querySelectorAll('.service-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const serviceName = card.dataset.service || 'Услуга';
+        const pricesJson = card.dataset.prices || '{}';
+        let pricesObj = {};
+        try { pricesObj = JSON.parse(pricesJson.replace(/(\r\n|\n|\r)/gm,"")); } catch(e) { pricesObj = {}; }
+        pricesTitle.textContent = serviceName;
+        pricesTableContainer.innerHTML = makePricesTable(pricesObj);
+        modalPrices.style.display = 'flex';
+      });
+    });
+
+    pricesClose.addEventListener('click', () => modalPrices.style.display = 'none');
+    modalPrices.addEventListener('click', e => { if (e.target === modalPrices) modalPrices.style.display = 'none'; });
+
+    // --- Замена картинок: если у тебя нет локальных файлов, можно подменить на внешние ---
+    // Примечание в коде: помести файлы в папку images/ с такими именами:
+    // polishing.jpg, protective_wrap.jpg, tinting.jpg, color_wrap.jpg, interior_clean.jpg,
+    // portfolio1.jpg ... portfolio8.jpg
+
+  </script>
+</body>
+</html>
